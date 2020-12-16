@@ -22,3 +22,15 @@ return
 F13 & e::
 Run Google.ahk
 return
+
+
+
+
+
+F13 & g::
+Run VS_comment_selected.ahk
+return
+
+F13 & h::
+Run VS_uncomment_selected.ahk
+return
