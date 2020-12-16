@@ -34,3 +34,7 @@ return
 F13 & h::
 Run VS_uncomment_selected.ahk
 return
+
+F13 & i::
+Run VS_collapse_uncollapse.ahk
+return
