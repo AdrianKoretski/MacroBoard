@@ -23,9 +23,9 @@ F13 & e::
 Run Google.ahk
 return
 
-
-
-
+F13 & f::
+Run VS_close_all_tabs.ahk
+return
 
 F13 & g::
 Run VS_comment_selected.ahk
