@@ -1,4 +1,6 @@
 #include "SerialClass.h"
+#include <string>
+#include <iostream>
 
 Serial::Serial(const char* portName)
 {
@@ -67,7 +69,6 @@ Serial::Serial(const char* portName)
 			}
 		}
 	}
-
 }
 
 Serial::~Serial()
@@ -80,6 +81,18 @@ Serial::~Serial()
 		//Close the serial handler
 		CloseHandle(this->hSerial);
 	}
+}
+
+bool Serial::Handshake()
+{
+	char incomingData[10] = "";
+	int readResult = 0;
+	WriteData("MACROBRD?\0", 10);
+	Sleep(2000);
+	readResult = ReadData(incomingData, 9);
+	if (readResult == 9 && strcmp(incomingData, "MACROBRD!") == 0)
+		return true;
+	return false;
 }
 
 int Serial::ReadData(char* buffer, unsigned int nbChar)
@@ -139,6 +152,7 @@ bool Serial::WriteData(const char* buffer, unsigned int nbChar)
 
 bool Serial::IsConnected()
 {
+	DCB dcbSerialParams = { 0 };
 	//Simply return the connection status
-	return this->connected;
+	return this->connected && GetCommState(this->hSerial, &dcbSerialParams);
 }

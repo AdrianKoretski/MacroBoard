@@ -12,6 +12,7 @@ void setup()
 
 void loop()
 {
+  handshake();
   for (int i = 2; i < 27; i++)
   {
     digitalWrite(i, LOW);
@@ -23,4 +24,13 @@ void loop()
       }
     digitalWrite(i, HIGH);
   }
+}
+
+void handshake()
+{
+  if (Serial.available() != 10)
+    return;
+  String incoming = Serial.readString();
+  if (incoming == "MACROBRD?\0")
+    Serial.write("MACROBRD!");
 }

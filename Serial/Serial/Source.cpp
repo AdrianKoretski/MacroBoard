@@ -47,11 +47,15 @@ int main()
 	for (int i = 0; i < 256; i++)
 	{
 		SP = new Serial(("\\\\.\\COM" + std::to_string(i)).c_str());
-		if (SP->IsConnected())
+		if (SP->IsConnected() && SP->Handshake())
 		{
 			std::cout << "Macro board connected" << std::endl;
 			terminal();
 			break;
+		}
+		else
+		{
+			delete(SP);
 		}
 	}
 	std::cout << "Macro board disconnected" << std::endl;
