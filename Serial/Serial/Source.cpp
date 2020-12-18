@@ -91,7 +91,7 @@ void processInput(byte first_val, byte second_val)
 	if (isOffCooldown(first_val, second_val))
 	{
 		sendFKey(inputToKey(first_val, second_val), inputToFKey(first_val, second_val));
-		std::cout << (int)first_val << " " <<(int)second_val << std::endl;
+		std::cout << "F" << ((int)first_val + 12) << "+" << (char)(65 + (int)second_val) << std::endl;
 	}
 }
 
