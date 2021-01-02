@@ -12,17 +12,18 @@
 void terminal();
 void sendFKey(int f_key, int key);
 void processInput(byte first_val, byte second_val);
-bool isOffCooldown(byte first_val, byte second_val);
+bool isOffCooldown();
+void remapInput(byte* first_val, byte* second_val);
 
 // https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
 int inputToKey(byte first_val, byte second_val)
 {
-	return 0x41 + second_val;
+	return 0x41 + first_val;
 }
 
 int inputToFKey(byte first_val, byte second_val)
 {
-	return 0x7C + first_val;
+	return 0x7C + second_val;
 }
 
 const long long KEY_PRESS_COOLDOWN = 700;
@@ -32,18 +33,13 @@ Serial* SP;
 const int WIDTH = 20;
 const int HEIGHT = 7;
 
-long long* last_press = new long long[HEIGHT * WIDTH];
+byte first_val_mapping[] = { 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 12, 13, 14, 15, 16, 17 };
+byte second_val_mapping[] = { 0, 2, 1, 3, 5, 4, 7, 6 };
 
-void clearLastInput()
-{
-	for (int i = 0; i < HEIGHT * WIDTH; i++)
-		last_press[i] = 0;
-}
+long long last_press = 0;
 
 int main()
 {
-	clearLastInput();
-
 	for (int i = 0; i < 256; i++)
 	{
 		SP = new Serial(("\\\\.\\COM" + std::to_string(i)).c_str());
@@ -60,8 +56,6 @@ int main()
 	}
 	std::cout << "Macro board disconnected" << std::endl;
 }
-
-
 
 void terminal()
 {
@@ -85,22 +79,28 @@ void terminal()
 
 void processInput(byte first_val, byte second_val)
 {
-	first_val -= 15;
-	second_val -= 27;
-
-	if (isOffCooldown(first_val, second_val))
+	if (isOffCooldown())
 	{
+		remapInput(&first_val, &second_val);
 		sendFKey(inputToKey(first_val, second_val), inputToFKey(first_val, second_val));
-		std::cout << "F" << ((int)first_val + 12) << "+" << (char)(65 + (int)second_val) << std::endl;
+		std::cout << "F" << ((int)second_val + 12) << "+" << (char)(65 + (int)first_val) << std::endl;
 	}
 }
 
-bool isOffCooldown(byte first_val, byte second_val)
+void remapInput(byte* first_val, byte* second_val)
+{
+	*first_val -= 2;
+	*second_val -= 44;
+	*first_val = first_val_mapping[(int)*first_val];
+	*second_val = second_val_mapping[(int)*second_val];
+}
+
+bool isOffCooldown()
 {
 	std::chrono::milliseconds ms = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
-	if (last_press[first_val * WIDTH + second_val] + KEY_PRESS_COOLDOWN > ms.count())
+	if (last_press + KEY_PRESS_COOLDOWN > ms.count())
 		return false;
-	last_press[first_val * WIDTH + second_val] = ms.count();
+	last_press = ms.count();
 	return true;
 }
 

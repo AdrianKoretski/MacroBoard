@@ -7,34 +7,35 @@ F13 & a::
 Run VS_bookmark.ahk
 return
 
-F13 & b::
+F14 & a::
 Run VS_prev_bookmark.ahk
 return
 
-F13 & c::
+F15 & a::
 Run VS_next_bookmark.ahk
 return
 
-F13 & d::
+F16 & a::
 Run VS_LogError.ahk
 return
 
-F13 & e::
+F17 & a::
 Run Google.ahk
 return
 
-F13 & f::
+F18 & a::
 Run VS_close_all_tabs.ahk
 return
 
-F13 & g::
+F19 & a::
 Run VS_comment_selected.ahk
 return
 
-F13 & h::
+F20 & a::
 Run VS_uncomment_selected.ahk
 return
 
-F13 & i::
+F13 & b::
 Run VS_collapse_uncollapse.ahk
 return
+
