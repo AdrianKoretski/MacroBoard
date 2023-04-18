@@ -85,13 +85,27 @@ Serial::~Serial()
 
 bool Serial::Handshake()
 {
-	char incomingData[10] = "";
+	char incomingData[19] = "";
 	int readResult = 0;
-	WriteData("MACROBRD?\0", 10);
-	Sleep(2000);
-	readResult = ReadData(incomingData, 9);
-	if (readResult == 9 && strcmp(incomingData, "MACROBRD!") == 0)
+	WriteData("STEPPER_TERMINAL\0", 17);
+	Sleep(500);
+
+	char* buff = new char();
+
+	int index = 0;
+
+	while (index != 19)
+	{
+		readResult = ReadData(&incomingData[index], 1);
+		if (readResult != 0)
+		{
+			index++;
+		}
+	}
+	if (strcmp(incomingData, "STEPPER_CONTROLLER\0") == 0)
+	{
 		return true;
+	}
 	return false;
 }
 

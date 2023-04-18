@@ -1,36 +1,24 @@
+bool m_handshake_complete = false;
+
 void setup()
 {
   Serial.begin(9600);
-  for (int i = 2; i < 27; i++)
-  {
-    pinMode(i, OUTPUT);
-    digitalWrite(i, HIGH);
-  }
-  for (int i = 27; i < 55; i++)
-    pinMode(i, INPUT_PULLUP);
 }
 
 void loop()
 {
   handshake();
-  for (int i = 2; i < 27; i++)
-  {
-    digitalWrite(i, LOW);
-    for (int j = 27; j < 55; j++)
-      if (digitalRead(j) == LOW)
-      {
-        Serial.write(i);
-        Serial.write(j);
-      }
-    digitalWrite(i, HIGH);
-  }
 }
 
 void handshake()
 {
-  if (Serial.available() != 10)
+  if (m_handshake_complete)
     return;
   String incoming = Serial.readString();
-  if (incoming == "MACROBRD?\0")
-    Serial.write("MACROBRD!");
+  if (incoming == "STEPPER_TERMINAL\0")
+  {
+    m_handshake_complete = true;
+    Serial.write("STEPPER_CONTROLLER");
+    Serial.write('\0');
+  }
 }
