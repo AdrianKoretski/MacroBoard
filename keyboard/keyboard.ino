@@ -1,10 +1,12 @@
 bool m_handshake_complete = false;
+bool m_skip_handshake = false;
 
 int step_pin = 5;
 int direction_pin = 6;
 int enable_pin = 7;
 
-int step_time = 100;
+int stepCount = 10;
+int stepDir = 1;
 
 void setup()
 {
@@ -21,13 +23,14 @@ void setup()
 
 void loop()
 {
-  if (!m_handshake_complete)
+  if (!m_handshake_complete && !m_skip_handshake)
   {
     handshake();
   }
   else
   {
-    StepMotor();
+    ReadInput();
+    MoveMotor();
   }
 }
 
@@ -42,11 +45,46 @@ void handshake()
   }
 }
 
+void ReadInput()
+{
+  int incomingByte = 0;
+  int index = 0;
+  while (incomingByte != '\n')
+  {
+    if (Serial.available() > 0)
+    {
+      incomingByte = Serial.read();
+      if (index == 0)
+      {
+        stepCount = incomingByte;
+      }
+      if (index == 1)
+      {
+        stepCount += 256 * incomingByte;
+      }
+      if (index == 2)
+      {
+        stepDir = incomingByte;
+      }
+      index++;
+    }
+  }
+}
+
+void MoveMotor()
+{
+  digitalWrite(direction_pin, stepDir);
+  for (int i = 0; i < stepCount; i++)
+  {
+    StepMotor();
+  }
+}
+
 void StepMotor()
 {
   digitalWrite(step_pin, HIGH);
-  delayMicroseconds(100);
+  delayMicroseconds(250*10);
 
   digitalWrite(step_pin, LOW);
-  delayMicroseconds(100);
+  delayMicroseconds(250*10);
 }

@@ -46,6 +46,13 @@ int main()
 		if (SP->IsConnected() && SP->Handshake())
 		{
 			std::cout << "Macro board connected" << std::endl;
+			Sleep(500);
+			char* c = new char[4]();
+			c[0] = 1 * 400 % 256;
+			c[1] = 1 * 400 / 256;
+			c[2] = 1;
+			c[3] = '\n';
+			SP->WriteData(c, 4);
 			terminal();
 			break;
 		}
